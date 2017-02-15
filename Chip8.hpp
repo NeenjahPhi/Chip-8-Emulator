@@ -9,9 +9,14 @@
 #define CHIP8_HPP_
 
 #include "specs.h"
+#include <iostream>
+#include "stdint.h"
+#include "stdio.h"
+
 
 class Chip8 {
 public:
+	Chip8() {}
 	auto initialize() -> void;
 	auto instructions() -> void;
 	auto read(uint16_t addr) -> uint8_t;
@@ -21,15 +26,30 @@ private:
 };
 
 void Chip8::initialize() {
+	std::cout << sizeof(gfx_display);
 	reg.PC = 0x200;
 	reg.SP = 0;
 	reg.I = 0;
 	reg.DT = 0;
 	reg.ST = 0;
 
-	for (uint8_t i : gfx_display) {
+	// init graphics display
+	for (int i = 0; i < 64*32; i++) {
 		gfx_display[i] = 0;
 	}
+
+	// init memory
+	for (int i = 0; i < 0x200; i++) {
+		c_memory[i] = 0;
+	}
+
+	// init keypad
+	for (int i = 0; i < 16; i++) {
+		key_input[i] = 0;
+	}
+
+
+
 }
 
 void Chip8::instructions() {
