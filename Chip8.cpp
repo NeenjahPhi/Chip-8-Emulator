@@ -84,12 +84,13 @@ void Chip8::instructions() {
 }
 
 
-uint8_t Chip8::read(uint16_t addr) {
-	return c_memory[addr];
-}
-
-void Chip8::write(uint16_t addr, uint8_t data) {
-	c_memory[addr] = data;
-}
+// Not really needed for now
+//uint8_t Chip8::read(uint16_t addr) {
+//	return c_memory[addr];
+//}
+//
+//void Chip8::write(uint16_t addr, uint8_t data) {
+//	c_memory[addr] = data;
+//}
 
 
