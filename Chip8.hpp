@@ -3,16 +3,30 @@
  *
  *  Created on: Feb 12, 2017
  *      Author: Phi
+ *
+ *      Using this as a reference
+ *      http://mattmik.com/files/chip8/mastering/chip8.html
  */
 
 #ifndef CHIP8_HPP_
 #define CHIP8_HPP_
 
-#include "specs.h"
 #include <iostream>
 #include "stdint.h"
 #include "stdio.h"
 
+
+
+typedef struct{
+	uint8_t V[16];	// General purpose registers. VF is carry Flag, don't use
+	uint16_t I;		// Index. Store memory Addresses. Only lowest 12 bits are used.
+	uint8_t DT; 	// Delay Timer
+	uint8_t ST;		// Sound Timer
+
+	uint16_t PC;	// Program Counter
+	uint8_t	SP;		// Stack Pointer
+	uint16_t S[16];	// Stack
+} registers;
 
 class Chip8 {
 public:
@@ -23,50 +37,9 @@ public:
 	auto write(uint16_t addr, uint8_t data) -> void;
 private:
 	registers reg;
+	uint8_t c_memory[0x1000];		// 4096 memory locations
+	uint8_t gfx_display[64*32];		// 64 x 32 pixel monochrome display
+	uint8_t key_input[16];			// 16-key hex keypad
 };
-
-void Chip8::initialize() {
-	std::cout << sizeof(gfx_display);
-	reg.PC = 0x200;
-	reg.SP = 0;
-	reg.I = 0;
-	reg.DT = 0;
-	reg.ST = 0;
-
-	// init graphics display
-	for (int i = 0; i < 64*32; i++) {
-		gfx_display[i] = 0;
-	}
-
-	// init memory
-	for (int i = 0; i < 0x200; i++) {
-		c_memory[i] = 0;
-	}
-
-	// init keypad
-	for (int i = 0; i < 16; i++) {
-		key_input[i] = 0;
-	}
-
-
-
-}
-
-void Chip8::instructions() {
-	uint16_t opcode = ( c_memory[reg.PC] << 8 | c_memory[++reg.PC] );
-
-	switch(opcode) {
-
-	}
-}
-
-
-uint8_t Chip8::read(uint16_t addr) {
-	return c_memory[addr];
-}
-
-void Chip8::write(uint16_t addr, uint8_t data) {
-	c_memory[addr] = data;
-}
 
 #endif /* CHIP8_HPP_ */
