@@ -36,7 +36,7 @@ void Chip8::instructions() {
 
 	// Decode and Execute
 	switch(opcode & 0xF000) {
-		case 0000:
+		case 0x0000:
 			switch(opcode & 0x000F) {
 				case 0x0000:	// 0x00E0 Clear Screen
 					break;
@@ -71,7 +71,7 @@ void Chip8::instructions() {
 					break;
 
 				case 0x8000:
-					switch(opcode & 000F) {
+					switch(opcode & 0x000F) {
 						case 0x0000:	// 0x8000 Set VX = VY
 							break;
 
