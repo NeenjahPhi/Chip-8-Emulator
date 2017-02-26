@@ -30,7 +30,7 @@ void Chip8::initialize() {
 
 }
 
-void Chip8::instructions() {
+auto Chip8::instructions() -> void {
 
 	uint16_t opcode = ( (c_memory[reg.PC] << 8) | c_memory[++reg.PC] );	// Fetch, 2 bytes long, stored big endian
 
@@ -39,9 +39,11 @@ void Chip8::instructions() {
 		case 0x0000:
 			switch(opcode & 0x000F) {
 				case 0x0000:	// 0x00E0 Clear Screen
+					CLS();
 					break;
 
 				case 0x000E:	// 0x00EE Return from subroutine
+					RET();
 					break;
 
 				default:
@@ -50,9 +52,11 @@ void Chip8::instructions() {
 
 			switch(opcode & 0xF000) {
 				case 0x1000:	// 0x1NNN Jump to address NNN
+					JP(opcode);
 					break;
 
 				case 0x2000:	// 0x2NNN Call subroutine at NNN
+					CALL(opcode);
 					break;
 
 				case 0x3000:	// 0x3XKK Skips the next instruction if VX = KK
@@ -83,6 +87,25 @@ void Chip8::instructions() {
 
 }
 
+auto Chip8::CLS() -> void {
+	for (int i = 0; i < 64*32; i++) {
+		gfx_display[i] = 0;
+	}
+	reg.PC++;
+}
+
+auto Chip8::RET() -> void {
+	reg.PC = reg.S[reg.SP--];
+}
+
+auto Chip8::JP(uint16_t opcode) -> void {
+	reg.PC = (opcode & 0x0FFF);
+}
+
+auto Chip8::CALL(uint16_t opcode) -> void {
+	reg.S[++reg.SP] = reg.PC;
+	reg.PC = (opcode & 0x0FFF);
+}
 
 // Not really needed for now
 //uint8_t Chip8::read(uint16_t addr) {
