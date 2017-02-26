@@ -31,7 +31,7 @@ void Chip8::initialize() {
 }
 
 auto Chip8::instructions() -> void {
-
+	// Get opcode. I'm incrementing the PC in here as well, equivalent to PC++
 	uint16_t opcode = ( (c_memory[reg.PC] << 8) | c_memory[++reg.PC] );	// Fetch, 2 bytes long, stored big endian
 
 	// Decode and Execute
@@ -60,6 +60,7 @@ auto Chip8::instructions() -> void {
 					break;
 
 				case 0x3000:	// 0x3XKK Skips the next instruction if VX = KK
+					SE_VX_BYTE(opcode);
 					break;
 
 				case 0x4000:	// 0x4XKK Skips the next instruction if VX != KK
@@ -112,10 +113,15 @@ auto Chip8::SE_VX_BYTE(uint16_t opcode) -> void {
 		reg.PC += 3;
 	}
 	else {
-		reg.PC += 2;
+		reg.PC ++;
 	}
 }
 
+auto Chip8::SE_VX_VY(uint16_t opcode) -> void{
+	if ( reg.V[ (opcode & 0x0F00) >> 8 ] == (opcode & 0x00FF) ) {
+		// FINISH THIS FUNCTION
+	}
+}
 // Not really needed for now
 //uint8_t Chip8::read(uint16_t addr) {
 //	return c_memory[addr];
