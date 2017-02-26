@@ -107,6 +107,15 @@ auto Chip8::CALL(uint16_t opcode) -> void {
 	reg.PC = (opcode & 0x0FFF);
 }
 
+auto Chip8::SE_VX_BYTE(uint16_t opcode) -> void {
+	if ( reg.V[ (opcode & 0x0F00) >> 8 ] == (opcode & 0x00FF) ) {
+		reg.PC += 3;
+	}
+	else {
+		reg.PC += 2;
+	}
+}
+
 // Not really needed for now
 //uint8_t Chip8::read(uint16_t addr) {
 //	return c_memory[addr];

@@ -15,7 +15,6 @@
 #include "stdint.h"
 #include "stdio.h"
 
-#define TOP_STACK 15
 
 typedef struct{
 	uint8_t V[16];	// General purpose registers. VF is carry Flag, don't use
@@ -41,6 +40,9 @@ public:
 	auto RET() -> void;
 	auto JP(uint16_t opcode) -> void;
 	auto CALL(uint16_t opcode) -> void;
+	auto SE_VX_BYTE(uint16_t opcode) -> void;
+	auto SNE(uint16_t opcode) -> void;
+	auto SE_VX_VY(uint16_t opcode) -> void;
 
 private:
 	registers reg;
