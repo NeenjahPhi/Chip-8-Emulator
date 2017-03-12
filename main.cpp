@@ -12,5 +12,8 @@ using namespace std;
 
 int main() {
 	// Main game emulator loop goes here
+	uint16_t i =  0x0A00;
+	uint8_t j = (i & 0x0F00);
+	cout << (int)j;
 	return 0;
 }

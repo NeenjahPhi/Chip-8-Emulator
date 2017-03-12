@@ -73,7 +73,7 @@ auto Chip8::instructions() -> void {
 		case 0x8000:
 			switch(opcode & 0x000F) {
 				// 0x8xy0 Set Vx = Vy
-				case 0x0000:	break;
+				case 0x0000:	LD_VX_VY(opcode);	break;
 
 				// 0x8xy1 Set Vx = Vx OR Vy
 				case 0x0001:	break;
@@ -179,6 +179,9 @@ auto Chip8::ADD_VX_BYTE(uint16_t opcode) -> void {
 	reg.PC++;
 }
 
+auto Chip8::LD_VX_VY(uint16_t opcode) -> void {
+	reg.V[ (opcode & 0x0F00) >> 8] = reg.V[ (opcode & 0x00F0) >> 8];
+}
 
 
 // Not really needed for now

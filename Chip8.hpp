@@ -45,6 +45,7 @@ public:
 	auto SE_VX_VY(uint16_t opcode) -> void;
 	auto LD_VX_BYTE(uint16_t opcode) -> void;
 	auto ADD_VX_BYTE(uint16_t opcode) -> void;
+	auto LD_VX_VY(uint16_t opcode) -> void;
 
 private:
 	registers reg;
