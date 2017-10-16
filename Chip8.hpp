@@ -46,8 +46,15 @@ public:
 	auto LD_VX_BYTE(uint16_t opcode) -> void;
 	auto ADD_VX_BYTE(uint16_t opcode) -> void;
 	auto LD_VX_VY(uint16_t opcode) -> void;
+	auto OR_VX_VY(uint16_t opcode) -> void;
+	auto AND_VX_VY(uint16_t opcode) -> void;
+	auto XOR_VX_VY(uint16_t opcode) -> void;
+	auto ADD_VX_VY(uint16_t opcode) -> void;
+	auto SUB_VX_VY(uint16_t opcode) -> void;
+	auto SHR_VX(uint16_t opcode) -> void;
+	auto SUBN_VY_VX(uint16_t opcode) -> void;
+	auto SHL_VX(uint16_t opcode) -> void;
 
-private:
 	registers reg;
 	uint8_t c_memory[0x1000];		// 4096 memory locations
 	uint8_t gfx_display[64*32];		// 64 x 32 pixel monochrome display

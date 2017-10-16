@@ -50,16 +50,16 @@ auto Chip8::instructions() -> void {
 		break;
 
 		// 0x1nnn Jump to address nnn
-		case 0x1000:	JP(opcode);		break;
+		case 0x1000:	JP(opcode);			break;
 
 		// 0x2NNN Call subroutine at nnn
-		case 0x2000:	CALL(opcode);	break;
+		case 0x2000:	CALL(opcode);		break;
 
 		// 0x3kkk Skips the next instruction if Vx = kk
 		case 0x3000:	SE_VX_BYTE(opcode);	break;
 
 		// 0x4xkk Skips the next instruction if vx != kk
-		case 0x4000:	SNE(opcode);	break;
+		case 0x4000:	SNE(opcode);			break;
 
 		// 0x5xy0 Skip next instruction if vx = vy.
 		case 0x5000:	SE_VX_VY(opcode);	break;
@@ -73,31 +73,31 @@ auto Chip8::instructions() -> void {
 		case 0x8000:
 			switch(opcode & 0x000F) {
 				// 0x8xy0 Set Vx = Vy
-				case 0x0000:	LD_VX_VY(opcode);	break;
+				case 0x0000:	 LD_VX_VY(opcode);		break;
 
 				// 0x8xy1 Set Vx = Vx OR Vy
-				case 0x0001:	break;
+				case 0x0001: OR_VX_VY(opcode);		break;
 
 				// 0x8xy2 Set Vx = Vx AND Vy
-				case 0x0002:	break;
+				case 0x0002: AND_VX_VY(opcode);		break;
 
 				// 0x8xy3 Set Vx = Vx XOR Vy
-				case 0x0003:	break;
+				case 0x0003: XOR_VX_VY(opcode);		break;
 
 				// 0x8xy4 Set Vx = Vx + Vy, set VF = carry
-				case 0x0004:	break;
+				case 0x0004:	 ADD_VX_VY(opcode);		break;
 
 				// 0x8xy5 Set Vx = Vx - Vy, set VF = NOT borrow
-				case 0x0005:	break;
+				case 0x0005:	 SUB_VX_VY(opcode);		break;
 
 				// 0x8xy6 Set Vx = Vx SHR 1
-				case 0x0006:	break;
+				case 0x0006:	 SHR_VX(opcode); 		break;
 
 				// 0x8xy7 Set Vx = Vy - Vx, set VF = NOT borrow
-				case 0x0007:	break;
+				case 0x0007:	 SUBN_VY_VX(opcode); 	break;
 
 				// 0x8xyE Set Vx = Vx SHL 1
-				case 0x000E:	break;
+				case 0x000E: SHL_VX(opcode);			break;
 
 				default:
 					printf("Unknown opcode 0x%X\n", opcode);
@@ -180,8 +180,71 @@ auto Chip8::ADD_VX_BYTE(uint16_t opcode) -> void {
 }
 
 auto Chip8::LD_VX_VY(uint16_t opcode) -> void {
-	reg.V[ (opcode & 0x0F00) >> 8] = reg.V[ (opcode & 0x00F0) >> 8];
+	reg.V[ (opcode & 0x0F00) >> 8] = reg.V[ (opcode & 0x00F0) >> 4];
+	reg.PC++;
 }
+
+auto Chip8::OR_VX_VY(uint16_t opcode) -> void {
+	reg.V[ (opcode & 0x0F00) >> 8] |= reg.V[ (opcode & 0x00F0) >> 4];
+	reg.PC++;
+}
+
+auto Chip8::AND_VX_VY(uint16_t opcode) -> void {
+	reg.V[ (opcode & 0x0F00) >> 8] &= reg.V[ (opcode & 0x00F0) >> 4];
+	reg.PC++;
+}
+
+auto Chip8::XOR_VX_VY(uint16_t opcode) -> void {
+	reg.V[ (opcode & 0x0F00) >> 8] ^= reg.V[ (opcode & 0x00F0) >> 4];
+	reg.PC++;
+}
+
+// Since we are dealing with 8-bit registers, we must first calculate the carry.
+// We can't check if VX and VY is greater than 255 by adding because we are
+// dealing with two 8-bit values using 8-bit ints.
+auto Chip8::ADD_VX_VY(uint16_t opcode) -> void {
+	if (reg.V[ (opcode & 0x0F00) >> 8 ] < reg.V[ (opcode & 0x00F0) >> 4 ])
+		reg.V[0xF] = 1;
+	else
+		reg.V[0xF] = 0;
+
+	reg.V[ (opcode & 0x0F00) >> 8] += reg.V[ (opcode & 0x00F0) >> 4];
+	reg.PC++;
+}
+
+auto Chip8::SUB_VX_VY(uint16_t opcode) -> void {
+	if (reg.V[ (opcode & 0x0F00) >> 8 ] > reg.V[ (opcode & 0x00F0) >> 4 ])
+		reg.V[0xF] = 1;
+	else
+		reg.V[0xF] = 0;
+
+	reg.V[ (opcode & 0x0F00) >> 8] -= reg.V[ (opcode & 0x00F0) >> 4];
+	reg.PC++;
+}
+
+auto Chip8::SHR_VX(uint16_t opcode) -> void {
+	reg.V[0xF] = reg.V[ (opcode & 0x0F00) >> 8 ] & 1;
+
+	reg.V[ (opcode & 0x0F00) >> 8] >>= 1;
+	reg.PC++;
+}
+
+auto Chip8::SUBN_VY_VX(uint16_t opcode) -> void {
+	if (reg.V[ (opcode & 0x00F0) >> 4 ] > reg.V[ (opcode & 0x0F00) >> 8 ])
+		reg.V[0xF] = 1;
+	else
+		reg.V[0xF] = 0;
+
+	reg.V[ (opcode & 0x0F00) >> 8] = reg.V[ (opcode & 0x00F0) >> 4] - reg.V[ (opcode & 0x0F00) >> 8];
+	reg.PC++;
+}
+
+auto Chip8::SHL_VX(uint16_t opcode) -> void {
+	reg.V[0xF] = reg.V[ (opcode & 0x0F00) >> 8 ] >> 7;
+	reg.V[ (opcode & 0x0F00) >> 8] <<= 1;
+	reg.PC++;
+}
+
 
 
 // Not really needed for now

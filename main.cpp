@@ -8,12 +8,16 @@
 
 #include <iostream>
 #include "Chip8.hpp"
+#include "stdio.h"
 using namespace std;
 
 int main() {
 	// Main game emulator loop goes here
-	uint16_t i =  0x0A00;
-	uint8_t j = (i & 0x0F00);
-	cout << (int)j;
+	Chip8 chip8;
+	chip8.initialize();
+	chip8.reg.V[3] = 5;
+	chip8.reg.V[5] = 8;
+	chip8.SUBN_VY_VX(0x835E);
+	std::cout << (int) chip8.reg.V[3];
 	return 0;
 }
