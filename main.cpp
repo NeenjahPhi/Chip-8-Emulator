@@ -18,6 +18,6 @@ int main() {
 	chip8.reg.V[3] = 5;
 	chip8.reg.V[5] = 8;
 	chip8.SUBN_VY_VX(0x835E);
-	std::cout << (int) chip8.reg.V[3];
+	std::cout << (int) chip8.reg.V[3] << std::endl;
 	return 0;
 }

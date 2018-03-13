@@ -54,6 +54,11 @@ public:
 	auto SHR_VX(uint16_t opcode) -> void;
 	auto SUBN_VY_VX(uint16_t opcode) -> void;
 	auto SHL_VX(uint16_t opcode) -> void;
+	auto SNE_VX_VY(uint16_t opcode) -> void;
+	auto LD_I_ADDR(uint16_t opcode) -> void;
+	auto JP_VO_ADDR(uint16_t opcode) -> void;
+	auto RND_VS_BYTE(uint16_t opcode) -> void;
+	auto DRW_VX_VY_NIB(uint16_t opcode) -> void;
 
 	registers reg;
 	uint8_t c_memory[0x1000];		// 4096 memory locations
